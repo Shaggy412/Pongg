@@ -21,6 +21,10 @@ public class BallController : MonoBehaviour
         {
             ResetAndSendBallInRandomDirection();
         }
+        if (rbody2D.velocity.magnitude < speed * 0.5f)
+        {
+            ResetBall();
+        }
     }
 
     private void ResetBall()
@@ -43,8 +47,8 @@ public class BallController : MonoBehaviour
         Vector3 velocity = new Vector3();
         bool shouldGoRight = Random.Range(1, 100) > 50;
         bool shouldGoLeft = Random.Range(1, 100) < 50;
-        velocity.x = shouldGoRight ? Random.Range(-.8f, -.2f): Random.Range(.8f, .2f);
-        velocity.y = shouldGoLeft ? Random.Range(-.8f, .2f): Random.Range(.8f, .2f);
+        velocity.x = shouldGoRight ? Random.Range(-.7f, -.3f): Random.Range(.7f, .3f);
+        velocity.y = shouldGoLeft ? Random.Range(-.7f, -.3f): Random.Range(.7f, .3f);
 
         if (shouldReturnNormalized)
         {
@@ -56,9 +60,10 @@ public class BallController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        Vector3 newVelocity = vel;
-        newVelocity += new Vector3(Random.Range(-.5f, .5f), Random.Range(-.5f, .5f));
-        rbody2D.velocity = Vector3.Reflect(newVelocity.normalized * speed, collision.contacts[0].normal);
+        rbody2D.velocity = Vector3.Reflect(vel, collision.contacts[0].normal);
+        Vector3 newVelocityWithOffset = rbody2D.velocity;
+        newVelocityWithOffset += new Vector3(Random.Range(-.5f, .5f), Random.Range(-.5f, .5f));
+        rbody2D.velocity = newVelocityWithOffset.normalized * speed;
         vel = rbody2D.velocity;
     }
 
